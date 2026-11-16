@@ -32,7 +32,7 @@
 
 /* ---------- Base ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; }
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 body {
   font: 400 16px/1.6 "Inter", system-ui, sans-serif;
   background: var(--bg);
@@ -40,6 +40,7 @@ body {
   background-image: radial-gradient(ellipse 70% 100% at 50% 0, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%);
   background-repeat: no-repeat;
   background-size: 100% 720px;
+  overflow-x: clip; /* guards against a stray 1px sideways scroll on small phones */
   -webkit-font-smoothing: antialiased;
   transition: background-color .4s var(--ease), color .4s var(--ease);
 }
@@ -72,7 +73,7 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   padding: 18px max(24px, calc((100vw - var(--max)) / 2 + 24px));
   transition: transform .5s var(--ease), background-color .4s var(--ease);
 }
-.nav.scrolled { background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); }
+.nav.scrolled { background: color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .nav.hidden { transform: translateY(-100%); }
 .logo { font-weight: 600; letter-spacing: -.02em; }
 .logo span { color: var(--accent); }
@@ -94,7 +95,7 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 }
 
 /* ---------- Portrait: arch frame + offset outline + status badge ---------- */
-.portrait { position: relative; justify-self: end; width: min(100%, 360px); margin: 0; }
+.portrait { position: relative; justify-self: end; width: min(100%, 360px); margin: 0 16px 0 0; } /* 16px keeps the offset outline inside the page padding */
 .frame { position: relative; aspect-ratio: 1 / 1; border-radius: 28px; }
 .frame::before { /* offset outline that slides on hover (transform only) */
   content: ""; position: absolute; inset: 0; border: 1px solid var(--accent);
@@ -116,7 +117,7 @@ h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   display: flex; align-items: center; gap: 10px;
   padding: 9px 16px 9px 14px; border-radius: 999px; font-size: .82rem; font-weight: 500;
   background: color-mix(in srgb, var(--surface) 88%, transparent);
-  border: 1px solid var(--line); backdrop-filter: blur(10px);
+  border: 1px solid var(--line); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 }
 .badge i { position: relative; width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; }
 .badge i::after { /* pulsing ring: transform + opacity only */
@@ -304,8 +305,14 @@ footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 40
   .portrait { order: -1; justify-self: start; width: 190px; }
   .frame::before { transform: translate3d(10px, 10px, 0); }
   .badge { left: 10px; bottom: 14px; white-space: nowrap; font-size: .75rem; padding: 7px 12px 7px 10px; }
-  .nav nav { gap: 14px; font-size: .85rem; }
+  .nav nav { gap: 6px; font-size: .85rem; }
+  .nav nav a { padding: 12px 6px; } /* bigger tap area without changing the look */
+  .theme { width: 40px; height: 40px; }
   .mail { overflow-wrap: anywhere; }
+  .portrait { margin-right: 0; }
+  /* fade the right edge of the tabs so it's clear they scroll sideways */
+  .tabs { -webkit-mask-image: linear-gradient(to right, #000 88%, transparent); mask-image: linear-gradient(to right, #000 88%, transparent); padding-right: 36px; }
+  .links a { padding: 8px 0; }
 }
 /* Small phones: the five nav links don't fit, so keep the three key ones */
 @media (max-width: 560px) {
